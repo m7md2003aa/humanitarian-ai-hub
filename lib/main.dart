@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
+import 'ui/role_selection_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'screens/donor_page.dart';
 import 'screens/beneficiary_page.dart';
@@ -12,18 +14,31 @@ class SDPApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final router = GoRouter(
-      initialLocation: '/donor',   // 👈 start here
+      initialLocation: '/',   // 👈 Start at Role Selection
       routes: [
-        GoRoute(path: '/donor', builder: (_, __) => const DonorPage()),
-        GoRoute(path: '/beneficiary', builder: (_, __) => const BeneficiaryPage()),
-        GoRoute(path: '/business', builder: (_, __) => const BusinessPage()),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const RoleSelectionScreen(),
+        ),
+        GoRoute(
+          path: '/donor',
+          builder: (_, __) => const DonorPage(),
+        ),
+        GoRoute(
+          path: '/beneficiary',
+          builder: (_, __) => const BeneficiaryPage(),
+        ),
+        GoRoute(
+          path: '/business',
+          builder: (_, __) => const BusinessPage(),
+        ),
       ],
     );
 
     return MaterialApp.router(
-      routerConfig: router,        // 👈 important: use router
+      routerConfig: router,
       title: 'SDP – Humanitarian AI Hub',
-      theme: ThemeData(useMaterial3: true),
+      theme: AppTheme.light(), // 👈 use your custom theme
     );
   }
 }

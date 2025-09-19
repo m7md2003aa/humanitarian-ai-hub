@@ -10,5 +10,5 @@ class AppColors {
   static const surface = Colors.white;
   static const text = Color(0xFF1E293B);
   static const textMuted = Color(0xFF6B7280);
-  //Ameena The worst
+  //By the Way We will get A
 }

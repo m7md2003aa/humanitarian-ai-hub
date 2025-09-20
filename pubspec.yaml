@@ -18,27 +18,14 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
-  flutter_image_compress: ^2.3.0
-  path_provider: ^2.1.3
-  uuid: ^4.5.1
   flutter:
     sdk: flutter
-  go_router: ^14.2.7
-  provider: ^6.1.2
-
-  # Firebase core + auth + firestore + storage (storage used next phase)
-  firebase_core: ^3.4.1
-  firebase_auth: ^5.1.4
-  cloud_firestore: ^5.4.4
-  firebase_storage: ^12.3.4
-
-  # Image picking comes in Phase 2
-  image_picker: ^1.1.2
+  go_router: ^14.2.0
+  image_picker: ^1.2.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^3.0.2
+

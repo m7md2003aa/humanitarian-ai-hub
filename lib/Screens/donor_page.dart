@@ -1,82 +1,89 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DonorPage extends StatefulWidget {
   const DonorPage({super.key});
+
   @override
   State<DonorPage> createState() => _DonorPageState();
 }
 
 class _DonorPageState extends State<DonorPage> {
-  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+  XFile? _picked;
 
-  Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 75,
-    );
-    if (picked != null) setState(() => _imageFile = File(picked.path));
+  Future<void> _pickFromGallery() async {
+    final x = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 75);
+    if (x == null) return;
+    setState(() => _picked = x);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Image selected (mock flow)')),
+      );
+    }
+  }
+
+  Future<void> _pickFromCamera() async {
+    final x = await _picker.pickImage(source: ImageSource.camera, imageQuality: 75);
+    if (x == null) return;
+    setState(() => _picked = x);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Photo captured (mock flow)')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = _picked != null;
     return Scaffold(
-      appBar: AppBar(title: const Text('Donor')),
-      body: Padding(
+      appBar: AppBar(title: const Text('Donor Dashboard')),
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            if (_imageFile != null)
-              ClipRRect(
+        children: [
+          if (hasImage)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(File(_picked!.path), height: 220, fit: BoxFit.cover),
+            )
+          else
+            Container(
+              height: 220,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(12),
-                child: Image.file(_imageFile!, height: 220, fit: BoxFit.cover),
-              )
-            else
-              Container(
-                height: 220,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text('No image selected'),
               ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.photo),
-              label: const Text('Pick Donation Image'),
+              child: const Center(child: Icon(Icons.image_outlined, size: 64)),
             ),
-            const SizedBox(height: 8),
-            const Text('Upload & AI classification will be added after Firebase.'),
-          ],
-        ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: _pickFromGallery,
+            icon: const Icon(Icons.photo_library_outlined),
+            label: const Text('Pick from gallery'),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: _pickFromCamera,
+            icon: const Icon(Icons.photo_camera_outlined),
+            label: const Text('Take a photo'),
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: hasImage
+                ? () {
+              // later: upload to Firebase Storage, then create Firestore item doc
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Mock: Save draft (backend next)')),
+              );
+            }
+                : null,
+            icon: const Icon(Icons.save_outlined),
+            label: const Text('Save draft'),
+          ),
+        ],
       ),
-      bottomNavigationBar: _BottomNav(current: 0),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  final int current;
-  const _BottomNav({required this.current});
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: current,
-      onDestinationSelected: (i) {
-        if (i == 0) context.go('/donor');
-        if (i == 1) context.go('/beneficiary');
-        if (i == 2) context.go('/business');
-      },
-      destinations: const [
-        NavigationDestination(icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: 'Donor'),
-        NavigationDestination(icon: Icon(Icons.list_alt), selectedIcon: Icon(Icons.list), label: 'Beneficiary'),
-        NavigationDestination(icon: Icon(Icons.storefront_outlined), selectedIcon: Icon(Icons.storefront), label: 'Business'),
-      ],
     );
   }
 }
